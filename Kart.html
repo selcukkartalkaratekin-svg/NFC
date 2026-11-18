@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kurumsal NFC Dijital Kartvizit Sistemi</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+body { background-color: #f1f5f9; color: #0f172a; min-height: 100vh; display: flex; justify-content: center; align-items: flex-start; padding: 24px 14px; }
+.wrapper { background: #ffffff; width: 100%; max-width: 480px; border-radius: 18px; box-shadow: 0 12px 30px rgba(0,0,0,0.08); padding: 26px 20px; overflow: hidden; }
+h2 { font-size: 20px; color: #0f172a; margin-bottom: 6px; }
+p.sub { font-size: 13px; color: #64748b; margin-bottom: 20px; line-height: 1.4; }
+.section-title { font-size: 14px; font-weight: 700; color: #1e293b; margin: 18px 0 10px; padding-bottom: 4px; border-bottom: 2px solid #e2e8f0; }
+.form-group { margin-bottom: 12px; }
+label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 4px; color: #475569; }
+input { width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13px; outline: none; }
+input:focus { border-color: #2563eb; }
+.row { display: flex; gap: 10px; }
+.row .form-group { flex: 1; }
+.btn-submit { width: 100%; padding: 14px; background: #2563eb; color: #fff; border: none; border-radius: 8px; font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 14px; }
+.result-box { margin-top: 22px; padding-top: 18px; border-top: 1px solid #e2e8f0; display: none; }
+.url-area { width: 100%; height: 72px; font-family: monospace; font-size: 11px; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 8px; word-break: break-all; resize: none; }
+.btn-row { display: flex; gap: 8px; margin-top: 10px; }
+.btn-row button { flex: 1; padding: 10px; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; }
+.btn-copy { background: #0f172a; color: #fff; }
+.btn-test { background: #059669; color: #fff; }
+.card-view { display: none; text-align: center; }
+.card-header-bar { height: 90px; border-radius: 12px; background: #0f172a; position: relative; margin-bottom: 50px; }
+.card-avatar { width: 86px; height: 86px; border-radius: 50%; border: 4px solid #fff; background: #e2e8f0; position: absolute; bottom: -43px; left: 50%; transform: translateX(-50%); object-fit: cover; }
+.card-name { font-size: 20px; font-weight: 800; color: #0f172a; margin-bottom: 2px; }
+.card-title { font-size: 13px; font-weight: 600; color: #2563eb; margin-bottom: 6px; }
+.card-biz { font-size: 13px; color: #475569; font-weight: 500; }
+.card-desc { font-size: 12px; color: #64748b; margin: 8px 12px 16px; line-height: 1.4; }
+.quick-actions { display: flex; justify-content: center; gap: 12px; margin-bottom: 20px; }
+.quick-btn { flex: 1; padding: 11px; border-radius: 8px; color: #fff; text-decoration: none; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 6px; }
+.btn-call { background: #2563eb; }
+.btn-wa { background: #25d366; }
+.info-list { text-align: left; display: flex; flex-direction: column; gap: 10px; margin-top: 14px; }
+.info-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0; font-size: 13px; text-decoration: none; color: #1e293b; }
+.info-item-content { flex: 1; word-break: break-all; }
+.info-item-label { font-size: 11px; color: #64748b; font-weight: 600; text-transform: uppercase; }
+</style>
+</head>
+<body>
+<div class="wrapper">
+<div id="formSection">
+<h2>Kurumsal Dijital Kartvizit</h2>
+<p class="sub">Bilgileri girip URL Oluştur'a tıklayın.</p>
+<form id="bizCardForm" onsubmit="return false;">
+<div class="section-title">🏢 İş Yeri Bilgileri</div>
+<div class="form-group"><label>İş Yeri Adı</label><input type="text" id="bizName" placeholder="Örn: Sersim A.Ş."></div>
+<div class="form-group"><label>Faaliyet / Açıklama</label><input type="text" id="bizDesc" placeholder="Örn: Beyaz Eşya Üretimi"></div>
+<div class="row">
+<div class="form-group"><label>Google Maps Linki / Adres</label><input type="text" id="bizMap" placeholder="Adres veya Maps linki"></div>
+<div class="form-group"><label>Tema Rengi</label><input type="color" id="themeColor" value="#0f172a" style="height:38px; padding:2px;"></div>
+</div>
+<div class="row">
+<div class="form-group"><label>Web Sitesi</label><input type="text" id="bizWeb" placeholder="https://site.com"></div>
+<div class="form-group"><label>Instagram</label><input type="text" id="bizInsta" placeholder="@hesap"></div>
+</div>
+<div class="row">
+<div class="form-group"><label>IBAN</label><input type="text" id="bizIban" placeholder="TR00..."></div>
+<div class="form-group"><label>Hesap Sahibi</label><input type="text" id="bizIbanName" placeholder="Ad Soyad"></div>
+</div>
+<div class="section-title">👤 Kişi Bilgileri</div>
+<div class="row">
+<div class="form-group"><label>Ad Soyad</label><input type="text" id="personName" placeholder="Ad Soyad" required></div>
+<div class="form-group"><label>Unvan</label><input type="text" id="personTitle" placeholder="Unvan"></div>
+</div>
+<div class="row">
+<div class="form-group"><label>Telefon / WhatsApp</label><input type="tel" id="personPhone" placeholder="05xx xxx xx xx" required></div>
+<div class="form-group"><label>E-posta</label><input type="email" id="personEmail" placeholder="mail@site.com"></div>
+</div>
+<button type="button" class="btn-submit" id="generateUrlBtn">URL Oluştur</button>
+<div class="result-box" id="resultBox">
+<label>NFC Kart İçin URL:</label>
+<textarea class="url-area" id="finalUrlDisplay" readonly></textarea>
+<div class="btn-row">
+<button type="button" class="btn-copy" id="copyUrlBtn">URL'yi Kopyala</button>
+<button type="button" class="btn-test" id="previewCardBtn">Önizle</button>
+</div>
+</div>
+</form>
+</div>
+<div id="cardViewSection" class="card-view">
+<div class="card-header-bar" id="headerBar"><img src="" id="viewAvatar" class="card-avatar" alt="Profil"></div>
+<div class="card-name" id="viewPersonName"></div>
+<div class="card-title" id="viewPersonTitle"></div>
+<div class="card-biz" id="viewBizName"></div>
+<div class="card-desc" id="viewBizDesc"></div>
+<div class="quick-actions">
+<a href="#" class="quick-btn btn-call" id="callBtn">📞 Ara</a>
+<a href="#" class="quick-btn btn-wa" id="waBtn">💬 WhatsApp</a>
+</div>
+<div class="info-list" id="infoList"></div>
+</div>
+</div>
+<script>
+function checkUrlHash() {
+const hash = window.location.hash;
+if (hash && hash.startsWith('#data=')) {
+try {
+const d = JSON.parse(decodeURIComponent(escape(atob(hash.replace('#data=', '')))));
+document.getElementById('formSection').style.display = 'none';
+document.getElementById('cardViewSection').style.display = 'block';
+if (d.color) document.getElementById('headerBar').style.background = d.color;
+document.getElementById('viewAvatar').src = "https://ui-avatars.com/api/?name=" + encodeURIComponent(d.name || 'User') + "&background=random&size=128";
+document.getElementById('viewPersonName').textContent = d.name || '';
+document.getElementById('viewPersonTitle').textContent = d.title || '';
+document.getElementById('viewBizName').textContent = d.bizName || '';
+document.getElementById('viewBizDesc').textContent = d.bizDesc || '';
+const cleanPhone = (d.phone || '').replace(/\s+/g, '');
+if (cleanPhone) {
+document.getElementById('callBtn').href = 'tel:' + cleanPhone;
+let wa = cleanPhone.startsWith('0') ? '90' + cleanPhone.substring(1) : cleanPhone;
+document.getElementById('waBtn').href = 'https://wa.me/' + wa;
+}
+const list = document.getElementById('infoList');
+list.innerHTML = '';
+if (d.email) list.innerHTML += <a href="mailto:${d.email}" class="info-item"><div class="info-item-content"><div class="info-item-label">E-Posta</div><div>${d.email}&lt;/div&gt;&lt;/div&gt;&lt;/a>;
+if (d.map) list.innerHTML += <a href="${d.map.startsWith('http')?d.map:'https://maps.google.com/?q='+encodeURIComponent(d.map)}" target="_blank" class="info-item"><div class="info-item-content"><div class="info-item-label">Konum</div><div>${d.map}&lt;/div&gt;&lt;/div&gt;&lt;/a>;
+if (d.web) list.innerHTML += <a href="${d.web.startsWith('http')?d.web:'https://'+d.web}" target="_blank" class="info-item"><div class="info-item-content"><div class="info-item-label">Web Sitesi</div><div>${d.web}&lt;/div&gt;&lt;/div&gt;&lt;/a>;
+if (d.iban) list.innerHTML += <div class="info-item" onclick="navigator.clipboard.writeText('${d.iban}');alert('IBAN Kopyalandı!');"><div class="info-item-content"><div class="info-item-label">IBAN (${d.ibanName||'Hesap'})&lt;/div&gt;&lt;div&gt;${d.iban} (Kopyala)</div></div></div>; return true; } catch (e) {} } return false; } if (!checkUrlHash()) { document.getElementById('generateUrlBtn').addEventListener('click', () =&gt; { const data = { bizName: document.getElementById('bizName').value.trim(), bizDesc: document.getElementById('bizDesc').value.trim(), map: document.getElementById('bizMap').value.trim(), color: document.getElementById('themeColor').value, web: document.getElementById('bizWeb').value.trim(), insta: document.getElementById('bizInsta').value.trim(), iban: document.getElementById('bizIban').value.trim(), ibanName: document.getElementById('bizIbanName').value.trim(), name: document.getElementById('personName').value.trim(), title: document.getElementById('personTitle').value.trim(), phone: document.getElementById('personPhone').value.trim(), email: document.getElementById('personEmail').value.trim() }; if (!data.name || !data.phone) { alert("Lütfen Ad Soyad ve Telefon girin."); return; } const b64 = btoa(unescape(encodeURIComponent(JSON.stringify(data)))); const fullUrl = ``${window.location.origin + window.location.pathname}#data=${b64};
+document.getElementById('finalUrlDisplay').value = fullUrl;
+document.getElementById('resultBox').style.display = 'block';
+});
+document.getElementById('copyUrlBtn').addEventListener('click', () => {
+const el = document.getElementById('finalUrlDisplay');
+el.select();
+document.execCommand('copy');
+alert("URL kopyalandı!");
+});
+document.getElementById('previewCardBtn').addEventListener('click', () => {
+window.open(document.getElementById('finalUrlDisplay').value, '_blank');
+});
+}
+</script>
+</body>
+</html>
